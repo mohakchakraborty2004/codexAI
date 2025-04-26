@@ -19,3 +19,15 @@ try {
 }
 
 }
+
+export const createQues = async() => {
+
+}
+
+export const getAllQuest = async() => {
+    //validated and active 
+}
+
+export const getQuest = async() => {
+    
+} 

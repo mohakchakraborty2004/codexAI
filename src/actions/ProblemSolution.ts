@@ -28,3 +28,9 @@ try {
 }
 
 }
+
+
+export const stakeAndSubmitSoln = async(problem: string, solution: string) => {
+    // calls the function above it automatically
+    // staking happens here  
+}
