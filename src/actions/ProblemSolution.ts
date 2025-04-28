@@ -4,7 +4,7 @@
 import axios from "axios"
 
 interface responseData {
-    result: boolean; // true or false for valid or invalid solution respectively
+    code_quality_score: boolean; // true or false for valid or invalid solution respectively
     rating : number; // rating out of 100 for the solution
     solutionType : string; // type of solution (e.g. brute force, optimized, etc.)
     timeComplexity : string; // time complexity of the solution
