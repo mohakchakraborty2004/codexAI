@@ -1,5 +1,7 @@
 "use server"
 import prisma from "@/db/db"
+import { getServerSession } from "next-auth";
+import authOptions from "./authoptions";
 
 export const closeQuest = async(quesID : string) => {
     //automatically called through the cron route
@@ -104,13 +106,47 @@ export const CalculateRanking = async() => {
       }
 }
 
- const getRewards = async() => {
-
+ const getRewards = async(amount : any) => {
+       const session  = await getServerSession(authOptions);
+    const userId = session?.user?.id;; 
+        try {
+            const res = await prisma.user.update({
+                where : {
+                    id : userId
+                }, 
+                data : {
+                    codexCoinBalance : {increment : amount}
+                }
+            })
+        } catch (error) {
+            
+        }
  }  
 
  const getSubmissions = async() => {
     // get the rewards here as well 
-    
+    try {
+        const response = await prisma.submission.findMany({
+            select : {
+                reward : {
+                    select : {
+                        amount : true, 
+                    }
+                }, 
+                id : true, 
+                createdAt : true
+            }
+        })
+
+        if (!response) {
+            throw new Error("some error occured");
+        }
+
+        return response
+
+    } catch (error) {
+        
+    }
  }
 
 export const ScheduleQuestionClosure = async() => {

@@ -1,10 +1,13 @@
 "use server"
 import prisma from "@/db/db"
+import { getServerSession } from "next-auth";
+import authOptions from "./authoptions";
 
 
 export const depositCodexCoin = async (amount: number) => {
 
-    const userId = session.id
+       const session  = await getServerSession(authOptions);
+    const userId = session?.user?.id;
 
      // logic from smart contract
     // for now we are randomly giving codexCoins to the user
@@ -51,7 +54,8 @@ export const withdrawCodexCoin = async (amount: number) => {
     // fetch from db and return the amount of codex coins in the wallet
     // reduce the amount from smart contract as well. 
     
-    const userId = session.id
+     const session  = await getServerSession(authOptions);
+    const userId = session?.user?.id;
     try {
     const response = await prisma.user.findFirst({
        where : {
@@ -96,7 +100,8 @@ export const withdrawCodexCoin = async (amount: number) => {
 export const getCodexCoinBalance = async () => {
     // logic from smart contract
     // fetch from db and return the amount of codex coins in the wallet
-    const userId = session.id; 
+       const session  = await getServerSession(authOptions);
+    const userId = session?.user?.id;; 
     try {
         const response = await prisma.user.findFirst({
             where : {
@@ -124,7 +129,8 @@ export const stakeCodexCoin = async (amount: number , quesID: string) => {
 
     //reduce the amount staked from db and reflect 
     // reduce it from smart contract as well 
-    const userId = session.id
+       const session  = await getServerSession(authOptions);
+    const userId = session?.user?.id;
     try {
     const response = await prisma.user.findFirst({
        where : {

@@ -2,6 +2,8 @@
 "use server"
 import axios from "axios"
 import prisma from "@/db/db"
+import { getServerSession } from "next-auth"
+import authOptions from "./authoptions"
 
 interface response {
     is_valid : boolean
@@ -32,7 +34,8 @@ try {
 
 export const createQues = async(title : string,description : string) => {
     // again session based auth here please 
-    const userid = session.id
+       const session  = await getServerSession(authOptions);
+    const userId = session?.user?.id;
     const tags = ["tag1", "tag2"]
     const ver = await verifyProblem(description)
     const is_valid = ver?.is_valid;
@@ -45,7 +48,7 @@ export const createQues = async(title : string,description : string) => {
                 tags : tags,
                 aiValidated : is_valid,
                 baseReward : 0,
-                creator : userid
+                creator : userId
             }
         })
 

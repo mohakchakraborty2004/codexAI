@@ -2,6 +2,9 @@
 
 "use server"
 import axios from "axios"
+import prisma from "@/db/db";
+import { getServerSession } from "next-auth";
+import authOptions from "./authoptions";
 
 interface responseData {
     is_correct : boolean; // true or false for valid or invalid solution respectively
@@ -43,7 +46,9 @@ try {
 }
 
 
-export const stakeAndSubmitSoln = async(problem: string, solution: string) => {
+export const stakeAndSubmitSoln = async(problem: string, solution: string, problemid: string) => {
+       const session  = await getServerSession(authOptions);
+    const userId = session?.user?.id; 
     // calls the function above it automatically
     try {
          const response = await verifySolution(problem, solution) 
@@ -54,12 +59,26 @@ export const stakeAndSubmitSoln = async(problem: string, solution: string) => {
          const valid = response.is_correct ;
 
          if(valid) {
-            const response2 = await prisma?.submission.create({
+            // wrap this in transaction
+            const response2 = await prisma.submission.create({
                 data : {
-                    
+                        content : solution,
+                        userId : userId,
+                        questionId : problemid, 
                 }
             })
+
+            const response3 = await prisma.reward.create({
+                data : {
+                    amount : 0,
+                    percentage : 0,
+                    submissionId : response2.id
+                }
+            })
+
+            // create transactions
          }
+
     } catch (error) {
         
     }
