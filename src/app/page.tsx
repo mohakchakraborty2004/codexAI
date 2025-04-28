@@ -1,5 +1,7 @@
 import Link from "next/link"
 import { RefreshCw } from "lucide-react"
+import FeatureTimeline from "@/components/feature-timeline"
+import Footer from "@/components/footer"
 
 export default function Home() {
   return (
@@ -205,6 +207,24 @@ export default function Home() {
           </div>
         </div>
       </main>
+
+      {/* Feature Timeline Section */}
+      <section className="py-20 bg-black/80 relative">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16">How CodexAI Works</h2>
+
+          <FeatureTimeline />
+
+          <div className="flex justify-center mt-16">
+            <button className="bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white px-8 py-4 rounded-full text-lg font-medium transition-all duration-300 hover:shadow-[0_0_20px_rgba(138,43,226,0.6)] transform hover:scale-105">
+              Learn More
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <Footer />
     </div>
   )
 }

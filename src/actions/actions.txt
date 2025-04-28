@@ -1,7 +1,3 @@
-1. fetch no. of codexCoins : mock it for now , later the amount of stellar tokens are fetched from user=>stellarAmount mapping and converted them to codexCoins
-2. Deposit stellarToken : again contract based 
-3. redeem Coins  :  coins converted into stellar token , balance checked in mapping and then allowed to redeem. (introduce a threshold)
-4. Problem Verification system 
-5. problem solution system 
+record transactions
 
 [No need of webHook rn , everything happens on main backend]

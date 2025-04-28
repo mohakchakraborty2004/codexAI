@@ -1,5 +1,3 @@
-
-
 import type { Config } from "tailwindcss"
 
 const config: Config = {
@@ -120,11 +118,10 @@ const config: Config = {
         "accordion-up": "accordion-up 0.2s ease-out",
         "pulse-slow": "pulse-slow 4s ease-in-out infinite",
         "spin-slow": "spin-slow 10s linear infinite",
-        "float": "float 6s ease-in-out infinite",
+        float: "float 6s ease-in-out infinite",
       },
     },
   },
   plugins: [],
 }
 export default config
-
