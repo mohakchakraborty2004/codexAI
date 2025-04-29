@@ -1,3 +1,4 @@
+"use client"
 import Link from "next/link"
 import { RefreshCw } from "lucide-react"
 import FeatureTimeline from "@/components/feature-timeline"
