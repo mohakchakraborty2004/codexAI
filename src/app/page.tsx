@@ -11,34 +11,33 @@ export default function Home() {
     <div className="min-h-screen bg-black text-white">
       {/* Navigation */}
       <header className="container mx-auto px-4 py-6 flex justify-between items-center">
-        <div className="text-xl font-bold">CodexAI</div>
+        <div className="flex justify-center items-center text-center">
+            <img className="h-14 w-15" src="./codex.png" alt="" />
+            <div className="text-2xl font-bold">odexAI</div>
+        </div>
+        
 
         <nav className="hidden md:block">
           <div className="bg-[#1e1e1e] rounded-full px-4 py-2">
             <ul className="flex space-x-6">
               <li>
-                <Link href="#" className="text-white opacity-90 hover:opacity-100">
+                <Link href="#hero" className="text-white opacity-90 hover:opacity-100">
                   Home
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-white/60 hover:text-white/90">
-                  Work
+                <Link href="#features" className="text-white/60 hover:text-white/90">
+                  Features
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-white/60 hover:text-white/90">
-                  Expertise
+                <Link href="/technicalArchitecture" className="text-white/60 hover:text-white/90">
+                  About
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-white/60 hover:text-white/90">
-                  Pricing
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-white/60 hover:text-white/90">
-                  Testimonials
+                <Link href="#contact" className="text-white/60 hover:text-white/90">
+                  Contact
                 </Link>
               </li>
             </ul>
@@ -55,7 +54,7 @@ export default function Home() {
       </header>
 
       {/* Hero Section */}
-      <main className="container mx-auto px-4 pt-12 pb-24 relative">
+      <main id="hero" className="container mx-auto px-4 pt-12 pb-24 relative">
         {/* Gradient Circle Effect */}
         <div
           className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] rounded-full opacity-30 blur-xl animate-pulse-slow"
@@ -86,7 +85,7 @@ export default function Home() {
               Learn More
             </button>
             <button className="bg-gray-800 hover:bg-gray-700 text-white px-6 py-3 rounded-full flex items-center gap-2 border border-purple-500/30 transition-all duration-300 hover:shadow-[0_0_15px_rgba(138,43,226,0.4)]">
-              Connect Wallet
+              Join Waitlist
             </button>
           </div>
 
@@ -215,7 +214,7 @@ export default function Home() {
       </main>
 
       {/* Feature Timeline Section */}
-      <section className="py-20 bg-black/80 relative">
+      <section id="features" className="py-20 bg-black/80 relative">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-16">How CodexAI Works</h2>
 
@@ -230,7 +229,10 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <Footer />
+      <div id="contact">
+        <Footer />
+      </div>
+     
     </div>
   )
 }

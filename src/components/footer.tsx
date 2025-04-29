@@ -8,7 +8,10 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Logo Section - 1/4 of space */}
           <div className="md:col-span-1">
-            <div className="text-2xl font-bold mb-4">CodexAI</div>
+            <div className="text-2xl font-bold mb-4 flex  justify-center items-center">
+            <img className="h-14 w-15" src="./codex.png" alt="" />
+              AI
+              </div>
             <p className="text-gray-400 text-sm">
               The future of DSA problem solving with crypto rewards and AI verification.
             </p>

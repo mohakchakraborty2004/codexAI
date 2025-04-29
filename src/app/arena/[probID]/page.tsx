@@ -151,10 +151,12 @@ export default function SolvingArena({ params }: { params: { probID: string } })
                 <button
                   onClick={async() => {
                     const msg = await stakeAndSubmitSoln(prob.content, code, probID, stake) 
+                    console.log(msg)
                     if(!msg) {
                         alert("failed")
                     }
                     if(msg) {
+                      
                         setSolution({
                             is_correct : msg.is_correct,
                             code_quality_score : msg.code_quality_score,
@@ -164,7 +166,7 @@ export default function SolvingArena({ params }: { params: { probID: string } })
                             space_complexity : msg.space_complexity
                         })
                     }
-                    
+                    setShowResults(true)
                   }}
                   disabled={!stake || !code}
                   className={`bg-purple-600 px-4 py-2 rounded-lg transition-all duration-300 ${

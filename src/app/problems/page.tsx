@@ -119,7 +119,7 @@ export default function Feed() {
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-4">
             <Link href="/" className="text-xl font-bold">
-              CodexAI
+            <img className="h-12 w-15" src="./codex.png" alt="" />
             </Link>
             <span className="text-gray-400">|</span>
             <h1 className="text-lg font-medium">Problem Feed</h1>

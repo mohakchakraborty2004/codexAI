@@ -11,9 +11,10 @@ interface responseData {
     is_correct : boolean; // true or false for valid or invalid solution respectively
     code_quality_score : number; // rating out of 100 for the solution
     edge_cases_handled : boolean;
-    edge_cases_explaination : string // type of solution (e.g. brute force, optimized, etc.)
-    timeComplexity : string; // time complexity of the solution
-    spaceComplexity : string; // space complexity of the solution
+    edge_cases_explanation : string // type of solution (e.g. brute force, optimized, etc.)
+    time_complexity : string; // time complexity of the solution
+    space_complexity : string; // space complexity of the solution
+    correctness_explanation : string;
 }
 
 
@@ -26,6 +27,7 @@ try {
             'content-type' : 'application/json'
         }
     } );
+        
     if (response.status !== 200) {
         throw new Error('Failed to verify solution');
     }
@@ -36,9 +38,9 @@ try {
         is_correct : response.data.is_correct,
         code_quality_score : response.data.code_quality_score,
         edge_cases_handled : response.data.edge_cases_handled,
-        edge_cases_explaination : response.data.edge_cases_explaination,
-        time_complexity : response.data.timeComplexity,
-        space_complexity : response.data.spaceComplexity
+        edge_cases_explaination : response.data.edge_cases_explanation,
+        time_complexity : response.data.time_complexity,
+        space_complexity : response.data.space_complexity
     } // Return the verification result which is valid or invalid
 } catch (error) {
     console.error('Error verifying solution:', error);
@@ -58,6 +60,7 @@ export const stakeAndSubmitSoln = async(problem: string, solution: string, probl
             throw new Error("staking failed")
         }
          const response = await verifySolution(problem, solution) 
+         console.log(response);
          if(!response) {
             throw new Error("error validating your submission");
          }
@@ -88,7 +91,7 @@ export const stakeAndSubmitSoln = async(problem: string, solution: string, probl
 
             return response;
             // create transactions
-         }
+         } else return response;
 
     } catch (error) {
         console.log("error: ", error)
