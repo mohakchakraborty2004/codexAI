@@ -4,6 +4,7 @@ import { RefreshCw } from "lucide-react"
 import FeatureTimeline from "@/components/feature-timeline"
 import Footer from "@/components/footer"
 import { redirect } from "next/navigation"
+import { signIn } from "next-auth/react"
 
 export default function Home() {
   return (
@@ -45,12 +46,11 @@ export default function Home() {
         </nav>
 
         <div className="flex items-center space-x-3">
-          <Link href="/auth/signin" className="text-white/90 hover:text-white">
-            Login
-          </Link>
-          <Link href="/auth/signin" className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-full">
-            Register
-          </Link>
+          <button className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-full" onClick={()=> {
+            signIn(undefined, { callbackUrl: '/dashboard' })
+          }}>
+            Register / Login 
+          </button>
         </div>
       </header>
 
