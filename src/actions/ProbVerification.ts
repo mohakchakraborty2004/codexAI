@@ -12,9 +12,9 @@ interface response {
 }
 
 export const verifyProblem = async (problem: string) => {
-const data  =  { problem }
+const data  =  { ques : problem }
 try {
-    const response = await axios.post<response>('/api/verify-solution', data , { 
+    const response = await axios.post<response>('http://localhost:8000/validateQuest', data , { 
         headers: {
         'Content-Type': 'application/json',
       }
@@ -51,7 +51,7 @@ export const createQues = async(title : string,description : string , is_valid :
                 tags : tags,
                 aiValidated : is_valid,
                 baseReward : 0,
-                creator : userId
+                creatorId : userId
             }
         })
 
@@ -66,7 +66,7 @@ export const createQues = async(title : string,description : string , is_valid :
             remarks : response.aiValidationLog
         }
     } catch (error) {
-        console.log("error")
+        console.log("error" , error)
     }
     
 }
@@ -76,10 +76,6 @@ export const getAllQuest = async() => {
     //session auth nextauth
     try {
         const response = await prisma.question.findMany({
-            where : {
-                aiValidated : true,
-                status : "ACTIVE"
-            }, 
             select : {
                 id : true ,
                 title : true ,

@@ -16,7 +16,7 @@ providers : [
     } ,
     async authorize(credentials: any): Promise<any> {
         const hashedPassword = await bcrypt.hash(credentials.password, 10);
-        const existingUser = await prisma.user.findFirst({
+        const existingUser = await prisma.user.findUnique({
             where : {
                 email : credentials.email
             }

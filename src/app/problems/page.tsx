@@ -1,12 +1,13 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import Link from "next/link"
 import { Coins, Flame, TrendingUp, Clock, ChevronRight, User } from "lucide-react"
 import { getAllQuest } from "@/actions/ProbVerification"
 
 
 export default function Feed() {
+    // const hasFetched = useRef(false);
     const [probs, setProbs] = useState([{
         id : "", 
         prob : "", 
@@ -15,15 +16,22 @@ export default function Feed() {
     }])
 
     useEffect(()=> {
+        // if (hasFetched) return
+        // //@ts-ignore
+        // hasFetched.current = true
         async function call() {
             const fetchProbs = await getAllQuest();
-            if(!fetchProbs) return
+            if(!fetchProbs) {
+                console.log("no");
+                return
+            }
             const data = fetchProbs?.map(probs => ({
                 id : probs.id ,
                 prob : probs.title ,
                 createdAt : probs.createdAt ,
                 creator : probs.creator.username 
             }))
+            console.log(data)
             setProbs(prevProbs => [...prevProbs, ...data])  // Fixed: removed extra comma
         }
 

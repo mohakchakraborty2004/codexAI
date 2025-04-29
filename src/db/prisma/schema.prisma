@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -23,7 +22,7 @@ model User {
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
   walletAddress     String?   @unique // blockchain wallet address
-  codexCoinBalance  Float     @default(0) // User's platform token balance
+  codexCoinBalance  Int     @default(0) // User's platform token balance
   
   // Relations
   createdQuestions  Question[] @relation("CreatedQuestions")

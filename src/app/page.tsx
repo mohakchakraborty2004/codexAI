@@ -148,7 +148,7 @@ export default function Home() {
                 </div>
                 <div>
                   <div className="font-medium">Rewards Earned</div>
-                  <div className="text-sm text-gray-400">Total: 2,345 ETH</div>
+                  <div className="text-sm text-gray-400">Total: 2,345 CDX</div>
                 </div>
               </div>
               <div className="bg-green-500/20 text-green-400 px-2 py-1 rounded-md text-xs font-medium">+25%</div>

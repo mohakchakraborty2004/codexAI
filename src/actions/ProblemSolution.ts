@@ -19,9 +19,9 @@ interface responseData {
 
 export const verifySolution = async (problem: string, solution: string) => {
 // authentication session based 
-const data  =  { problem, solution }
+const data  =  { ques : problem, solution_code : solution }
 try {
-    const response = await axios.post<responseData>('/api/verify-solution', data ,{
+    const response = await axios.post<responseData>('http://localhost:8000/checkSolution', data ,{
         headers : {
             'content-type' : 'application/json'
         }
@@ -95,3 +95,4 @@ export const stakeAndSubmitSoln = async(problem: string, solution: string, probl
     }
     // staking happens here  
 }
+

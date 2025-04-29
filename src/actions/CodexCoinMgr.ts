@@ -26,14 +26,16 @@ export const depositCodexCoin = async (amount: number) => {
         return 
     }
 
-    const newAmount = response.codexCoinBalance + amount;
+    const newAmount : number = response.codexCoinBalance + amount 
+    console.log(newAmount);
+    const numericAmount = parseInt(String(amount), 10); 
 
     const response2 = await prisma.user.update({
         where : {
             id : userId
         } , 
         data : {
-            codexCoinBalance : newAmount
+            codexCoinBalance : {increment : numericAmount}
         }
     })
 
