@@ -1,0 +1,1 @@
+// about page , will write about technical architecture here

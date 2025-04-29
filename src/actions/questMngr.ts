@@ -2,6 +2,7 @@
 import prisma from "@/db/db"
 import { getServerSession } from "next-auth";
 import authOptions from "./authoptions";
+import { error } from "console";
 
 export const closeQuest = async(quesID : string) => {
     //automatically called through the cron route
@@ -106,10 +107,23 @@ export const CalculateRanking = async() => {
       }
 }
 
- const getRewards = async(amount : any) => {
+ export const getRewards = async(amount : any, subId : any) => {
        const session  = await getServerSession(authOptions);
-    const userId = session?.user?.id;; 
+    const userId = session?.user?.id;
         try {
+            const Reward = await prisma.reward.update({
+              where : {
+                submissionId : subId
+              }, 
+              data : {
+                amount : {decrement : amount}
+              }
+            })
+
+            if(!Reward) {
+              throw new Error("internal server error")
+            }
+
             const res = await prisma.user.update({
                 where : {
                     id : userId
@@ -118,15 +132,23 @@ export const CalculateRanking = async() => {
                     codexCoinBalance : {increment : amount}
                 }
             })
+            if (res) {
+              return {msg : "redeemed successfully"}
+            }
         } catch (error) {
-            
+            console.log(error)
         }
  }  
 
- const getSubmissions = async() => {
+ export const getSubmissions = async() => {
     // get the rewards here as well 
+    const session  = await getServerSession(authOptions);
+    const userId = session?.user?.id;
     try {
         const response = await prisma.submission.findMany({
+           where : {
+            userId : userId
+           },
             select : {
                 reward : {
                     select : {
@@ -134,7 +156,12 @@ export const CalculateRanking = async() => {
                     }
                 }, 
                 id : true, 
-                createdAt : true
+                createdAt : true, 
+                question : {
+                  select : {
+                    title : true
+                  }
+                }
             }
         })
 

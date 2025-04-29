@@ -1,23 +1,61 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Coins } from "lucide-react"
+import { getUserDetail } from "@/actions/user"
+import { getRewards, getSubmissions } from "@/actions/questMngr"
+import { depositCodexCoin, withdrawCodexCoin } from "@/actions/CodexCoinMgr"
 
 export default function Dashboard() {
+
+    
+
   const [showDepositModal, setShowDepositModal] = useState(false)
   const [showWithdrawModal, setShowWithdrawModal] = useState(false)
-  const [amount, setAmount] = useState("")
+  const [submissions, setSubmissions] = useState([{
+    id : "",
+    title : "", 
+    reward : 0
+  }])
+  const [user, setUser] = useState({
+    username : "" ,
+    email : "",
+    codexcoinbalance : 0
+  })
+  const [amount, setAmount] = useState(0)
 
+  useEffect(()=> {
+    async function call() {
+        const userinfo = await getUserDetail();
+        if(!userinfo) return 
+        setUser({
+            username : userinfo.username, 
+            email : userinfo.email,
+            codexcoinbalance : userinfo.codexCoinBalance
+        })
+
+        const subm = await getSubmissions();
+        if(!subm) return;
+        const data = subm.map(item => ({
+          id: item.id  , // Assume you have this function or use item's ID
+          title: item.question.title || "",
+          reward: item.reward?.amount || 0
+        }));
+        setSubmissions(prevsubs => [...prevsubs, ...data]);
+    }
+
+    call()
+  }, [])
   // Mock user data
-  const user = {
-    username: "cryptodev",
-    email: "cryptodev@example.com",
-    balance: 2450,
-  }
+//   const user = {
+//     username: "cryptodev",
+//     email: "cryptodev@example.com",
+//     balance: 2450,
+//   }
 
   // Mock submissions data
-  const submissions = [
+  const subs = [
     {
       id: 1,
       title: "Two Sum Problem",
@@ -63,6 +101,9 @@ export default function Dashboard() {
           <Link href="/problems" className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-full text-sm">
             Explore Problems
           </Link>
+          <Link href="/createProblem" className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-full text-sm">
+            create Problem
+          </Link>
         </div>
       </header>
 
@@ -77,7 +118,7 @@ export default function Dashboard() {
             <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
               <div className="bg-gray-800 rounded-lg px-4 py-2 flex items-center gap-2">
                 <Coins className="text-yellow-400 w-5 h-5" />
-                <span className="font-medium">{user.balance} CodexCoins</span>
+                <span className="font-medium">{user.codexcoinbalance} CodexCoins</span>
               </div>
               <div className="flex gap-2">
                 <button
@@ -91,6 +132,12 @@ export default function Dashboard() {
                   className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-full text-sm transition-all duration-300"
                 >
                   Withdraw
+                </button>
+                <button
+                  onClick={() => setShowWithdrawModal(true)}
+                  className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-full text-sm transition-all duration-300"
+                >
+                  connect Wallet
                 </button>
               </div>
             </div>
@@ -108,20 +155,22 @@ export default function Dashboard() {
               >
                 <div className="flex justify-between items-start mb-3">
                   <h3 className="font-medium">{submission.title}</h3>
-                  <span className="text-gray-400 text-sm">{submission.date}</span>
+                  {/* <span className="text-gray-400 text-sm">{submission.date}</span> */}
                 </div>
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
                     <Coins className="text-yellow-400 w-4 h-4" />
                     <span className="text-yellow-400 font-medium">{submission.reward} CodexCoins</span>
                   </div>
-                  {!submission.redeemed ? (
-                    <button className="bg-purple-600 hover:bg-purple-700 px-3 py-1 rounded-full text-xs transition-all duration-300">
+                  
+                    <button className="bg-purple-600 hover:bg-purple-700 px-3 py-1 rounded-full text-xs transition-all duration-300"
+                    onClick={async() => {
+                        const msg = await getRewards(submission.reward, submission.id)
+                        if(msg) alert(msg.msg)
+                    }}
+                    >
                       Redeem Reward
                     </button>
-                  ) : (
-                    <span className="text-gray-400 text-xs">Redeemed</span>
-                  )}
                 </div>
               </div>
             ))}
@@ -137,13 +186,13 @@ export default function Dashboard() {
             <p className="text-gray-300 mb-4">Are you sure you want to proceed with the deposit?</p>
             <div className="mb-4">
               <label htmlFor="amount" className="block text-sm font-medium text-gray-400 mb-1">
-                Amount (INR)
+                Amount (CDX)
               </label>
               <input
                 type="number"
                 id="amount"
                 value={amount}
-                onChange={(e) => setAmount(e.target.value)}
+                onChange={(e : any) => setAmount(e.target.value)}
                 className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 placeholder="Enter amount"
               />
@@ -156,10 +205,12 @@ export default function Dashboard() {
                 Cancel
               </button>
               <button
-                onClick={() => {
+                onClick={async() => {
                   // Handle deposit logic here
+                  const msg = await depositCodexCoin(amount)
+                  if(msg) alert(msg.msg)
                   setShowDepositModal(false)
-                  setAmount("")
+                  setAmount(0)
                 }}
                 className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg transition-colors"
               >
@@ -178,13 +229,13 @@ export default function Dashboard() {
             <p className="text-gray-300 mb-4">Are you sure you want to proceed with the withdrawal?</p>
             <div className="mb-4">
               <label htmlFor="withdraw-amount" className="block text-sm font-medium text-gray-400 mb-1">
-                Amount (INR)
+                Amount (CDX)
               </label>
               <input
                 type="number"
                 id="withdraw-amount"
                 value={amount}
-                onChange={(e) => setAmount(e.target.value)}
+                onChange={(e : any) => setAmount(e.target.value)}
                 className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 placeholder="Enter amount"
               />
@@ -197,10 +248,11 @@ export default function Dashboard() {
                 Cancel
               </button>
               <button
-                onClick={() => {
-                  // Handle withdraw logic here
+                onClick={async() => {
+                  const msg = await withdrawCodexCoin(amount)
+                  if(msg) alert(msg.msg) 
                   setShowWithdrawModal(false)
-                  setAmount("")
+                  setAmount(0)
                 }}
                 className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg transition-colors"
               >

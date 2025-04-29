@@ -181,7 +181,7 @@ export const stakeCodexCoin = async (amount: number , quesID: string) => {
        throw new Error("some error occured")
    }
 
-   return {msg : "coins successfully staked and submitted solution"}
+   return {msg : "coins successfully staked", status : 200}
 
   } catch (error) {
     console.log("error :", error)

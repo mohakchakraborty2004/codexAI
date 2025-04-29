@@ -1,15 +1,49 @@
 "use client"
-
-import { useState } from "react"
+//check for agent parameters for language use
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { ArrowLeft, Coins, AlertCircle } from "lucide-react"
+import { useParams } from "next/navigation"
+import { getQuest } from "@/actions/ProbVerification"
+import { stakeAndSubmitSoln } from "@/actions/ProblemSolution"
 
 export default function SolvingArena({ params }: { params: { probID: string } }) {
-  const [stake, setStake] = useState("")
+  const [stake, setStake] = useState(0)
   const [showResults, setShowResults] = useState(false)
   const [code, setCode] = useState("")
+  const [prob, setProblem] = useState({
+    creator : "" ,
+    title : "", 
+    content : "",
+    rewardPool : 0
+  })
+  const [solution, setSolution] = useState({
+    is_correct : false,
+    code_quality_score : 0,
+    edge_cases_handled : false,
+    edge_cases_explaination : "",
+    time_complexity : "",
+    space_complexity : ""
+  })
+  const { probID } = useParams()
 
-  // Mock problem data
+
+  useEffect(()=> {
+    async function call() {
+        const fetchprob = await getQuest(probID);
+        if(fetchprob?.status == 200) {
+            setProblem({
+                creator : fetchprob.response.creator.username,
+                title : fetchprob.response.title,
+                content : fetchprob.response.content,
+                rewardPool : fetchprob.response.rewardPool
+            })
+        }
+    }
+   
+    call()
+  }, [])
+  // Mock problem data (remove later essential to hardcode)
   const problem = {
     id: Number.parseInt(params.probID),
     title: "Balanced Binary Tree Validation",
@@ -40,8 +74,9 @@ export default function SolvingArena({ params }: { params: { probID: string } })
     feedback: "Great solution! Your algorithm has O(n) time complexity which is optimal.",
   }
 
-  const handleSolve = () => {
+  const handleSolve = async(problem : string, solution: string) => {
     // In a real app, this would submit the code to the backend
+    return 1;
     setShowResults(true)
   }
 
@@ -54,7 +89,7 @@ export default function SolvingArena({ params }: { params: { probID: string } })
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <h1 className="text-lg font-medium">{problem.title}</h1>
-          <span
+          {/* <span
             className={`ml-auto px-2 py-0.5 rounded-full text-xs ${
               problem.difficulty === "Easy"
                 ? "bg-green-500/20 text-green-400"
@@ -64,7 +99,7 @@ export default function SolvingArena({ params }: { params: { probID: string } })
             }`}
           >
             {problem.difficulty}
-          </span>
+          </span> */}
         </div>
       </header>
 
@@ -82,7 +117,7 @@ export default function SolvingArena({ params }: { params: { probID: string } })
                 <h3 className="text-lg font-medium mb-2">Problem Description</h3>
                 <p className="text-gray-300">{problem.description}</p>
 
-                <h4 className="text-md font-medium mt-4 mb-2">Examples:</h4>
+                {/* <h4 className="text-md font-medium mt-4 mb-2">Examples:</h4>
                 {problem.examples.map((example, index) => (
                   <div key={index} className="mb-3 bg-gray-800/50 p-3 rounded-md">
                     <div>
@@ -92,14 +127,14 @@ export default function SolvingArena({ params }: { params: { probID: string } })
                       <span className="text-gray-400">Output:</span> {example.output}
                     </div>
                   </div>
-                ))}
+                ))} */}
 
-                <h4 className="text-md font-medium mt-4 mb-2">Constraints:</h4>
+                {/* <h4 className="text-md font-medium mt-4 mb-2">Constraints:</h4>
                 <ul className="list-disc pl-5 text-gray-300">
                   {problem.constraints.map((constraint, index) => (
                     <li key={index}>{constraint}</li>
                   ))}
-                </ul>
+                </ul> */}
               </div>
             </div>
 
@@ -109,12 +144,28 @@ export default function SolvingArena({ params }: { params: { probID: string } })
                 <input
                   type="number"
                   value={stake}
-                  onChange={(e) => setStake(e.target.value)}
+                  onChange={(e : any) => setStake(e.target.value)}
                   className="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
                   placeholder="Enter stake amount"
                 />
                 <button
-                  onClick={handleSolve}
+                  onClick={async() => {
+                    const msg = await stakeAndSubmitSoln(prob.content, code, probID, stake) 
+                    if(!msg) {
+                        alert("failed")
+                    }
+                    if(msg) {
+                        setSolution({
+                            is_correct : msg.is_correct,
+                            code_quality_score : msg.code_quality_score,
+                            edge_cases_handled : msg.edge_cases_handled,
+                            edge_cases_explaination : msg.edge_cases_explaination,
+                            time_complexity : msg.time_complexity,
+                            space_complexity : msg.space_complexity
+                        })
+                    }
+                    
+                  }}
                   disabled={!stake || !code}
                   className={`bg-purple-600 px-4 py-2 rounded-lg transition-all duration-300 ${
                     !stake || !code
@@ -158,7 +209,7 @@ export default function SolvingArena({ params }: { params: { probID: string } })
           <div className="bg-gray-900 rounded-xl p-6 max-w-md w-full mx-4 border border-gray-800">
             <div className="text-center mb-6">
               <h3 className="text-2xl font-bold mb-2">
-                {results.passed ? "Challenge Completed! 🎉" : "Almost There! 🔍"}
+                {solution.is_correct ? "Challenge Completed! 🎉" : "Almost There! 🔍"}
               </h3>
               <p className="text-gray-300">Your solution has been evaluated</p>
             </div>
@@ -166,26 +217,26 @@ export default function SolvingArena({ params }: { params: { probID: string } })
             <div className="space-y-4 mb-6">
               <div className="flex justify-between items-center">
                 <span className="text-gray-400">Score:</span>
-                <span className="font-medium text-lg">{results.score}/100</span>
+                <span className="font-medium text-lg">{solution.code_quality_score}/10</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-gray-400">Reward:</span>
                 <span className="font-medium text-lg flex items-center gap-1">
-                  <Coins className="text-yellow-400 w-5 h-5" /> {results.reward} CodexCoins
+                  <Coins className="text-yellow-400 w-5 h-5" /> TBC CodexCoins
                 </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-gray-400">Execution Time:</span>
-                <span>{results.executionTime}</span>
+                <span>{solution.time_complexity}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-gray-400">Memory Usage:</span>
-                <span>{results.memoryUsage}</span>
+                <span>{solution.space_complexity}</span>
               </div>
-              <div className="pt-2 border-t border-gray-800">
+              {/* <div className="pt-2 border-t border-gray-800">
                 <span className="text-gray-400 block mb-1">Feedback:</span>
                 <p className="text-sm">{results.feedback}</p>
-              </div>
+              </div> */}
             </div>
 
             <div className="flex justify-center">

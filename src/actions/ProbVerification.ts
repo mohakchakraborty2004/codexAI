@@ -19,7 +19,7 @@ try {
         'Content-Type': 'application/json',
       }
     });
-    if (response.status !== 200) {
+    if (!response) {
         throw new Error('Failed to verify solution');
     }
     const is_valid = response.data.is_valid;
@@ -32,13 +32,16 @@ try {
 
 }
 
-export const createQues = async(title : string,description : string) => {
+export const createQues = async(title : string,description : string , is_valid : boolean) => {
     // again session based auth here please 
        const session  = await getServerSession(authOptions);
     const userId = session?.user?.id;
+    if(!session) {
+        throw new Error("please login")
+    }
     const tags = ["tag1", "tag2"]
-    const ver = await verifyProblem(description)
-    const is_valid = ver?.is_valid;
+    // const ver = await verifyProblem(description)
+    // const is_valid = ver?.is_valid;
     try {
         //we will improve agent for difficulty and tags
         const response = await prisma.question.create({
@@ -76,6 +79,16 @@ export const getAllQuest = async() => {
             where : {
                 aiValidated : true,
                 status : "ACTIVE"
+            }, 
+            select : {
+                id : true ,
+                title : true ,
+                createdAt : true, 
+                creator : {
+                    select : {
+                        username : true
+                    }
+                }
             }
         })
 
@@ -86,7 +99,13 @@ export const getAllQuest = async() => {
 }
 
 export const getQuest = async(quesID : any) => {
-    //nextauth session
+    //nextauth sesssion
+    const session = await getServerSession(authOptions);
+    const userId = session?.user?.id
+
+    if(!session) {
+        return 
+    }
     try {
         const response = await prisma.question.findUnique({
             where : {
@@ -103,7 +122,13 @@ export const getQuest = async(quesID : any) => {
                 rewardPool : true
             }
         })
+
+        if(response) {
+            return {response , status : 200}
+        } else {
+            throw new Error("error fetching question")
+        }
     } catch (error) {
-        
+        console.log("error")
     }
 } 

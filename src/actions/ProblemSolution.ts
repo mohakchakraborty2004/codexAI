@@ -5,6 +5,7 @@ import axios from "axios"
 import prisma from "@/db/db";
 import { getServerSession } from "next-auth";
 import authOptions from "./authoptions";
+import { stakeCodexCoin } from "./CodexCoinMgr";
 
 interface responseData {
     is_correct : boolean; // true or false for valid or invalid solution respectively
@@ -46,11 +47,16 @@ try {
 }
 
 
-export const stakeAndSubmitSoln = async(problem: string, solution: string, problemid: string) => {
+export const stakeAndSubmitSoln = async(problem: string, solution: string, problemid: any, amount : number) => {
        const session  = await getServerSession(authOptions);
     const userId = session?.user?.id; 
     // calls the function above it automatically
     try {
+        const stake = await stakeCodexCoin(amount, problemid); 
+
+        if (!stake || !stake.status || stake.status !== 200) {
+            throw new Error("staking failed")
+        }
          const response = await verifySolution(problem, solution) 
          if(!response) {
             throw new Error("error validating your submission");
@@ -68,6 +74,10 @@ export const stakeAndSubmitSoln = async(problem: string, solution: string, probl
                 }
             })
 
+            if(!response2) {
+                throw new Error("you are cooked bro")
+            }
+
             const response3 = await prisma.reward.create({
                 data : {
                     amount : 0,
@@ -76,11 +86,12 @@ export const stakeAndSubmitSoln = async(problem: string, solution: string, probl
                 }
             })
 
+            return response;
             // create transactions
          }
 
     } catch (error) {
-        
+        console.log("error: ", error)
     }
     // staking happens here  
 }

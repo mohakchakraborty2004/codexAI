@@ -2,6 +2,7 @@ import Link from "next/link"
 import { RefreshCw } from "lucide-react"
 import FeatureTimeline from "@/components/feature-timeline"
 import Footer from "@/components/footer"
+import { redirect } from "next/navigation"
 
 export default function Home() {
   return (
@@ -43,10 +44,10 @@ export default function Home() {
         </nav>
 
         <div className="flex items-center space-x-3">
-          <Link href="#" className="text-white/90 hover:text-white">
+          <Link href="/auth/signin" className="text-white/90 hover:text-white">
             Login
           </Link>
-          <Link href="#" className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-full">
+          <Link href="/auth/signin" className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-full">
             Register
           </Link>
         </div>
@@ -76,7 +77,11 @@ export default function Home() {
           </p>
 
           <div className="flex flex-wrap justify-center gap-4 mb-20">
-            <button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-full flex items-center gap-2 transition-all duration-300 hover:shadow-[0_0_15px_rgba(138,43,226,0.6)]">
+            <button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-full flex items-center gap-2 transition-all duration-300 hover:shadow-[0_0_15px_rgba(138,43,226,0.6)]"
+            onClick={()=> {
+              redirect('/technicalArchitecture')
+            }}
+            >
               Learn More
             </button>
             <button className="bg-gray-800 hover:bg-gray-700 text-white px-6 py-3 rounded-full flex items-center gap-2 border border-purple-500/30 transition-all duration-300 hover:shadow-[0_0_15px_rgba(138,43,226,0.4)]">
