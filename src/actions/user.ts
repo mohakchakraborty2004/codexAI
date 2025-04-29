@@ -30,7 +30,37 @@ export const getUserDetail = async() => {
 
         return userinfo;
     } catch (error) {
-        
+        console.log(error);
     }
 
+}
+
+export async function addtoDb(address : string) {
+    const session = await getServerSession(authOptions);
+    const userId = session?.user?.id
+
+    try {
+        const addAddress = await prisma.user.update({
+            where : {
+                id : userId
+            }, 
+            data : {
+                walletAddress : address
+            }
+        })
+
+        if(addAddress) {
+            return {
+                msg : "successfully added", 
+                status : 200
+            } 
+        } else {
+            return {
+                msg : "cooked", 
+                status : 400
+            }
+        }
+    } catch (error) {
+        
+    }
 }

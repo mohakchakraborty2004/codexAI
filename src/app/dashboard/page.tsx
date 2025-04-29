@@ -6,6 +6,7 @@ import { Coins } from "lucide-react"
 import { getUserDetail } from "@/actions/user"
 import { getRewards, getSubmissions } from "@/actions/questMngr"
 import { depositCodexCoin, withdrawCodexCoin } from "@/actions/CodexCoinMgr"
+import Cnw from "@/components/wallet-button"
 
 export default function Dashboard() {
 
@@ -91,7 +92,7 @@ export default function Dashboard() {
       {/* Header */}
       <header className="bg-gray-900/80 backdrop-blur-sm border-b border-gray-800">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
             <Link href="/" className="text-xl font-bold">
               CodexAI
             </Link>
@@ -104,6 +105,9 @@ export default function Dashboard() {
           <Link href="/createProblem" className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-full text-sm">
             create Problem
           </Link>
+          <div>
+            <Cnw></Cnw>
+          </div>
         </div>
       </header>
 
