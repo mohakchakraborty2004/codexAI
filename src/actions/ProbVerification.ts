@@ -13,6 +13,9 @@ interface response {
 
 export const verifyProblem = async (problem: string) => {
 const data  =  { ques : problem }
+console.info('[problem-verification] Starting problem validation', {
+    problemLength: problem.length
+})
 try {
     const response = await axios.post<response>('http://localhost:8000/validateQuest', data , { 
         headers: {
@@ -24,10 +27,13 @@ try {
     }
     const is_valid = response.data.is_valid;
     const reason = response.data.reason;
+    console.info('[problem-verification] Problem validation completed', {
+        isValid: is_valid
+    })
    
     return {is_valid : is_valid, reason : reason } // Return the verification result which is true or false
 } catch (error) {
-    console.error('Error verifying solution:', error);
+    console.error('[problem-verification] Problem validation failed', error);
 }
 
 }
@@ -57,8 +63,16 @@ export const createQues = async(title : string,description : string , is_valid :
 
 
         if(!response) {
-            console.log("some error occured")
+            console.error('[problem-verification] Question creation returned no response', {
+                userId
+            })
         }
+
+        console.info('[problem-verification] Question created', {
+            questionId: response.id,
+            userId,
+            aiValidated: response.aiValidated
+        })
 
         return {
             id : response.id,
@@ -66,7 +80,10 @@ export const createQues = async(title : string,description : string , is_valid :
             remarks : response.aiValidationLog
         }
     } catch (error) {
-        console.log("error" , error)
+        console.error('[problem-verification] Question creation failed', {
+            userId,
+            error
+        })
     }
     
 }
